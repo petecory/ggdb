@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}GGDB{% endblock %}</title>
+    {% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% endblock %}
+</head>
+<body>
+    <header>
+        {% block nav %}
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/games">Games</a></li>
+                {% if 'status' in session and session['status'] == 'admin' %}
+                <li><a href="{{ url_for('admin') }}">Admin</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endblock %}
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        &copy; GGDB 2023
+    </footer>
+
+    {% block scripts %}
+
+    {% endblock %}
+</body>
+</html>

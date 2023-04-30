@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<input type="text" id="search-box" onkeyup="searchTable()" placeholder="Search for games...">
+<table id="games-table" sortable filter>
+  <thead>
+    <tr>
+      <th class="title-column">Title</th>
+      <th>Site</th>
+      <th>Redeemed</th>
+      <th>Claimed</th>
+      {% if username == 'cory' %}
+      <th></th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for game in games %}
+    <tr>
+      <td class="title-column">{{ game['game_title'] }}</td>
+      <td>{{ game['site'] }}</td>
+      <td>{% if game['redemed'] == 0 %}False{% endif %}
+          {% if game['redemed'] == 1 %}True{% endif %}</td>
+      <td>{{ game['claimed'] }}</td>
+      {% if username == 'cory' %}
+      <td><a href="{{ url_for('edit', id=game.id) }}" class="btn btn-primary">Edit</a></td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<script>
+      function searchTable() {
+        // Get the search box element
+        var input = document.getElementById("search-box");
+        // Get the table element
+        var table = document.getElementById("games-table");
+        // Get the table rows
+        var rows = table.getElementsByTagName("tr");
+        // Convert the search query to lowercase
+        var query = input.value.toLowerCase();
+        // Loop through the table rows
+        for (var i = 0; i < rows.length; i++) {
+          // Get the table cells in the current row
+          var cells = rows[i].getElementsByTagName("td");
+          // Loop through the table cells
+          for (var j = 0; j < cells.length; j++) {
+            // Convert the cell value to lowercase
+            var cellValue = cells[j].textContent.toLowerCase();
+            // Check if the cell value contains the search query
+            if (cellValue.indexOf(query) > -1) {
+              // Show the row if it matches the search query
+              rows[i].style.display = "";
+              break;
+            } else {
+              // Hide the row if it doesn't match the search query
+              rows[i].style.display = "none";
+            }
+          }
+        }
+      }
+    </script>
+{% endblock %}

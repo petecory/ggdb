@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <h1>Edit Game</h1>
+  <form method="POST">
+    <table class="table">
+      <tr>
+        <td><label for="game_title">Game Title:</label></td>
+        <td><input type="text" name="game_title" class="form-control" value="{{ games[1] }}"></td>
+      </tr>
+      <tr>
+        <td><label for="site">Site:</label></td>
+        <td><input type="text" name="site" class="form-control" value="{{ games[2] }}"></td>
+      </tr>
+      <tr>
+        <td><label for="game_key">Game Key:</label></td>
+        <td><input type="text" name="game_key" class="form-control" value="{{ games[3] }}"></td>
+      </tr>
+      <tr>
+        <td><label for="redeemed">Redeemed:</label></td>
+        <td><input type="checkbox" name="redeemed" {% if games[4] == "1" %}checked{% endif %}></td>
+      </tr>
+      <tr>
+        <td><label for="claimed">Claimed:</label></td>
+        <td><input type="text" name="claimed" class="form-control" value="{{ games[5] }}"></td>
+      </tr>
+      <tr>
+        <td><label for="notes">Notes:</label></td>
+        <td><textarea name="notes" class="form-control">{{ games[6] }}</textarea></td>
+      </tr>
+    </table>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{{ url_for('games') }}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}
