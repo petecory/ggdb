@@ -24,3 +24,4 @@ document.addEventListener('DOMContentLoaded', function() {
     showPasswordBtn.textContent = 'Hide';
   });
 });
+

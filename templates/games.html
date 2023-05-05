@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h1>Welcome to The Games Database</h1>
 <input type="text" id="search-box" onkeyup="searchTable()" placeholder="Search for games...">
-<table id="games-table" sortable filter>
+<div>
+  <button onclick="hideClaimed('True')">Hide Claimed</button>
+</div>
+<table id="games-table">
   <thead>
     <tr>
       <th class="title-column">Title</th>
@@ -59,5 +63,30 @@
           }
         }
       }
+      function hideClaimed(value) {
+        var table = document.getElementById("games-table");
+        var rows = table.getElementsByTagName("tr");
+        var visibleRowCounter = 0;
+        for (var i = 1; i < rows.length; i++) {
+          var cells = rows[i].getElementsByTagName("td");
+          var redeemedCell = cells[2];
+          var redeemedValue = redeemedCell.textContent.trim();
+          if (redeemedValue.indexOf(value.toString()) !== -1) {
+            rows[i].style.display = "none";
+          } else {
+            visibleRowCounter++;
+            if (visibleRowCounter % 2 == 0) {
+              rows[i].style.backgroundColor = "#c0c0c0";
+            } else {
+              rows[i].style.backgroundColor = "#f0f0f0";
+            }
+          }
+        }
+      }
+
+
+
+
+
     </script>
 {% endblock %}

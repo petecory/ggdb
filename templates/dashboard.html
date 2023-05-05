@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Welcome to Your Dashboard</h1>
+    <h1>Welcome to The Games Database</h1>
     <p>Hello, {{ username }}!</p>
     <p>You are logged in.</p>
     <p>Your current status is {{ status }}.</p>
     {% if status == 'pending' %}
     <p style="color:red; font-size:30px">You are currently in a Pending status. You will not be able to view the games. Please contact the Admin.</p>
     {% endif %}
-    <a href="{{ url_for('logout') }}">Logout</a>
 {% endblock %}

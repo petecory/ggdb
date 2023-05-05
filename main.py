@@ -46,10 +46,6 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.secret_key = secret_key
 
 
-conn = sqlite3.connect(user_database_url)
-c = conn.cursor()
-
-
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
