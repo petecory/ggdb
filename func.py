@@ -1,9 +1,15 @@
 import sqlite3
 import random
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+
+games_database_url = os.getenv("GAMES_DATABASE_URL")
+user_database_url = os.getenv("USER_DATABASE_URL")
 
 def verify_user(username, password):
-    conn = sqlite3.connect('user.db')
+    conn = sqlite3.connect(user_database_url)
     c = conn.cursor()
     c.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
     result = c.fetchone()
@@ -15,7 +21,7 @@ def verify_user(username, password):
 
 
 def authenticate_user(username, password, status):
-    conn = sqlite3.connect('user.db')
+    conn = sqlite3.connect(user_database_url)
     c = conn.cursor()
     c.execute("SELECT * FROM users WHERE username=? AND password=? AND status=?", (username, password, status))
     result = c.fetchone()
@@ -27,7 +33,7 @@ def authenticate_user(username, password, status):
 
 
 def get_user(username):
-    conn = sqlite3.connect('user.db')
+    conn = sqlite3.connect(user_database_url)
     c = conn.cursor()
     row = c.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
     conn.close()
@@ -42,7 +48,7 @@ def get_user(username):
 
 
 def all_games():
-    conn = sqlite3.connect('games.db')
+    conn = sqlite3.connect(games_database_url)
     c = conn.cursor()
 
     # Execute a query to retrieve the games data
@@ -66,7 +72,7 @@ def all_games():
 
 
 def gamebyid(id):
-    conn = sqlite3.connect('games.db')
+    conn = sqlite3.connect(games_database_url)
     c = conn.cursor()
 
     # Execute a query to retrieve the games data
@@ -76,7 +82,7 @@ def gamebyid(id):
 
 
 def adduser():
-    conn = sqlite3.connect('user.db')
+    conn = sqlite3.connect(user_database_url)
     c = conn.cursor()
     username = input("Enter username: ")
     password = getpass.getpass("Enter password: ")
@@ -94,7 +100,7 @@ def adduser():
 
 
 def get_user_by_id(user_id):
-    conn = sqlite3.connect('user.db')
+    conn = sqlite3.connect(user_database_url)
     c = conn.cursor()
     row = c.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
     conn.close()
@@ -105,7 +111,7 @@ def get_user_by_id(user_id):
 
 
 def update_user(username, password, status):
-    conn = sqlite3.connect('user.db')
+    conn = sqlite3.connect(user_database_url)
     c = conn.cursor()
     c.execute("UPDATE users SET username = ?, password = ?, status = ? WHERE username = ?", (username, password, status, username))
     conn.commit()
@@ -113,7 +119,7 @@ def update_user(username, password, status):
 
 
 def get_all_users():
-    conn = sqlite3.connect('user.db')
+    conn = sqlite3.connect(user_database_url)
     c = conn.cursor()
     rows = c.execute("SELECT * FROM users").fetchall()
     conn.close()
@@ -142,7 +148,7 @@ def generate_password():
 
 
 def add_user_to_db(username, password, status):
-    conn = sqlite3.connect('user.db')
+    conn = sqlite3.connect(user_database_url)
     c = conn.cursor()
     c.execute("INSERT INTO users (username, password, status) VALUES (?, ?, ?)", (username, password, status))
     conn.commit()

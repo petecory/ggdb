@@ -1,12 +1,54 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
 from func import *
+from dotenv import load_dotenv
+import os
+import shutil
+import secrets
+
+
+# Path to .env file
+env_path = 'data/.env'
+# Path to .env_template file
+env_template_path = '.env_template'
+
+
+# Check if .env file exists, if not, copy .env_template to .env
+if not os.path.exists(env_path):
+    shutil.copyfile(env_template_path, env_path)
+
+
+# Load environment variables
+load_dotenv('data/.env')
+
+
+# Check the value of the SECRET_KEY variable and replace it with a new key if it is "changeme"
+key_check = os.getenv('SECRET_KEY')
+if key_check == 'changeme' or key_check == '':
+    new_secret_key = secrets.token_hex(16)
+    with open(env_path, 'r') as f:
+        lines = f.readlines()
+    with open(env_path, 'w') as f:
+        for line in lines:
+            if line.startswith('SECRET_KEY='):
+                line = f'SECRET_KEY="{new_secret_key}"\n'
+            f.write(line)
+        os.environ["SECRET_KEY"] = new_secret_key
+
+
+games_database_url = os.getenv("GAMES_DATABASE_URL")
+user_database_url = os.getenv("USER_DATABASE_URL")
+secret_key = os.getenv("SECRET_KEY")
+debug = os.getenv("DEBUG")
+
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
-app.secret_key = "23KDSJ2j2SJSJSI3u9skadjoawkdjahsdjkn2lkjn3kjjklhdiujh3mnk2l1"
+app.secret_key = secret_key
 
-conn = sqlite3.connect('user.db')
+
+conn = sqlite3.connect(user_database_url)
 c = conn.cursor()
+
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -33,6 +75,7 @@ def dashboard():
     else:
         return redirect('/')
 
+
 @app.route('/gamedetail')
 def gamedetail():
     if 'username' in session and session['status'] != 'pending':  # check if the username is stored in the session
@@ -43,6 +86,7 @@ def gamedetail():
         return redirect('/dashboard')
     else:
         return redirect('/')
+
 
 @app.route('/games')
 def games():
@@ -58,6 +102,7 @@ def games():
     else:
         return redirect('/')
 
+
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
     if session['status'] == 'admin':
@@ -70,7 +115,7 @@ def edit(id):
             claimed = request.form['claimed']
             notes = request.form['notes']
 
-            conn = sqlite3.connect('games.db')
+            conn = sqlite3.connect(games_database_url)
             c = conn.cursor()
             c.execute("UPDATE games SET game_title=?, site=?, game_key=?, redemed=?, claimed=?, notes=? WHERE id=?",
                       (game_title, site, game_key, redeemed, claimed, notes, id))
@@ -78,7 +123,7 @@ def edit(id):
             conn.close()
             return redirect(url_for('games'))
         else:
-            conn = sqlite3.connect('games.db')
+            conn = sqlite3.connect(games_database_url)
             c = conn.cursor()
             game = c.execute("SELECT * FROM games WHERE id=?", (id,)).fetchone()
             conn.close()
@@ -96,6 +141,7 @@ def admin():
     else:
         return redirect('/dashboard')
 
+
 @app.route('/admin/add_user', methods=['GET', 'POST'])
 def add_user():
     if request.method == 'POST':
@@ -107,6 +153,7 @@ def add_user():
         return redirect(url_for('admin'))
     else:
         return render_template('add-user.html')
+
 
 @app.route('/admin/edit-user/<username>', methods=['GET', 'POST'])
 def edit_user(username):
