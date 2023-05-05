@@ -33,60 +33,10 @@
     {% endfor %}
   </tbody>
 </table>
-<script>
-      function searchTable() {
-        // Get the search box element
-        var input = document.getElementById("search-box");
-        // Get the table element
-        var table = document.getElementById("games-table");
-        // Get the table rows
-        var rows = table.getElementsByTagName("tr");
-        // Convert the search query to lowercase
-        var query = input.value.toLowerCase();
-        // Loop through the table rows
-        for (var i = 0; i < rows.length; i++) {
-          // Get the table cells in the current row
-          var cells = rows[i].getElementsByTagName("td");
-          // Loop through the table cells
-          for (var j = 0; j < cells.length; j++) {
-            // Convert the cell value to lowercase
-            var cellValue = cells[j].textContent.toLowerCase();
-            // Check if the cell value contains the search query
-            if (cellValue.indexOf(query) > -1) {
-              // Show the row if it matches the search query
-              rows[i].style.display = "";
-              break;
-            } else {
-              // Hide the row if it doesn't match the search query
-              rows[i].style.display = "none";
-            }
-          }
-        }
-      }
-      function hideClaimed(value) {
-        var table = document.getElementById("games-table");
-        var rows = table.getElementsByTagName("tr");
-        var visibleRowCounter = 0;
-        for (var i = 1; i < rows.length; i++) {
-          var cells = rows[i].getElementsByTagName("td");
-          var redeemedCell = cells[2];
-          var redeemedValue = redeemedCell.textContent.trim();
-          if (redeemedValue.indexOf(value.toString()) !== -1) {
-            rows[i].style.display = "none";
-          } else {
-            visibleRowCounter++;
-            if (visibleRowCounter % 2 == 0) {
-              rows[i].style.backgroundColor = "#c0c0c0";
-            } else {
-              rows[i].style.backgroundColor = "#f0f0f0";
-            }
-          }
-        }
-      }
-
-
-
-
-
-    </script>
 {% endblock %}
+
+
+
+
+
+
