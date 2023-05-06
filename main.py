@@ -15,6 +15,8 @@ env_path = 'data/.env'
 # Path to .env_template file
 env_template_path = '.env_template'
 
+if not os.path.exists('./uploads'):
+    os.makedirs('./uploads')
 
 # Check if .env file exists, if not, copy .env_template to .env
 if not os.path.exists(env_path):
