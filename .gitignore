@@ -1,0 +1,14 @@
+/backup/
+/data/
+/instance/
+/venv/
+/csvintosqlite.py
+/data.csv
+/database.db
+/dbfunc.py
+/games.db
+/main.py.bak
+/realgames.db
+/test.py
+/data/user.db
+/.env
