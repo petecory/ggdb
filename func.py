@@ -153,3 +153,11 @@ def add_user_to_db(username, password, status):
     c.execute("INSERT INTO users (username, password, status) VALUES (?, ?, ?)", (username, password, status))
     conn.commit()
     conn.close()
+
+
+def delete_user_db(username):
+    conn = sqlite3.connect(user_database_url)
+    c = conn.cursor()
+    c.execute("DELETE FROM users WHERE username=?", (username,))
+    conn.commit()
+    conn.close()

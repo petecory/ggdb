@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}GGDB{% endblock %}</title>
     {% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
     {% endblock %}
 </head>
 <body>
@@ -18,7 +17,7 @@
                 {% if 'status' in session and session['status'] == 'admin' %}
                 <li><a href="{{ url_for('admin') }}">Admin</a></li>
                 {% endif %}
-                <li style="float:right"><a href="{{ url_for('logout') }}">Logout</a></li>
+                <li class="right"><a href="{{ url_for('logout') }}">Logout</a></li>
             </ul>
         </nav>
         <br />
@@ -36,5 +35,6 @@
         <br />
         &copy; GGDB 2023
     </footer>
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>

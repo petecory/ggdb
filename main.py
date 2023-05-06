@@ -49,7 +49,9 @@ app.secret_key = secret_key
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
+    if 'username' in session:  # check if the username is already stored in the session
+        return redirect('/dashboard')
+    elif request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         if verify_user(username, password):
@@ -165,6 +167,18 @@ def edit_user(username):
             return redirect(url_for('admin'))
         else:
             return render_template('edit-user.html', user=user_info, status=session['status'])
+    else:
+        return redirect('/dashboard')
+
+
+@app.route('/admin/delete-user/<username>', methods=['GET', 'POST'])
+def delete_user(username):
+    if 'username' in session and session['status'] == 'admin':
+        if request.method == 'POST':
+            delete_user_db(username)
+            return redirect(url_for('admin'))
+        else:
+            return render_template('delete-user.html', username=username)
     else:
         return redirect('/dashboard')
 

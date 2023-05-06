@@ -2,12 +2,14 @@
 {% block nav %}
 {% endblock %}
 {% block content %}
+<div id="login-form-wrapper">
   <h1>GGDB Login Page</h1>
-    <form method="post">
-      <label for="username">Username:</label>
-      <input type="text" name="username" required><br><br>
-      <label for="password">Password:</label>
-      <input type="password" name="password" required><br><br>
-      <input type="submit" value="Login">
-    </form>
+  <form method="post">
+    <label for="username">Username:</label>
+    <input type="text" name="username" required><br><br>
+    <label for="password">Password:</label>
+    <input type="password" name="password" required><br><br>
+    <input type="submit" value="Login">
+  </form>
+</div>
 {% endblock %}
