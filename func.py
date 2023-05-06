@@ -3,7 +3,7 @@ import random
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
+load_dotenv('data/.env')
 
 games_database_url = os.getenv("GAMES_DATABASE_URL")
 user_database_url = os.getenv("USER_DATABASE_URL")

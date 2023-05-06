@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+from waitress import serve
 import sqlite3
 from func import *
 from dotenv import load_dotenv
@@ -174,6 +175,7 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
+application = app
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    serve(app, host='0.0.0.0', port=5000, threads=4)
