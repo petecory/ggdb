@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Attempt to Delete {{ username }} - Site Owner</h2>
+  <p>You are not able to delete {{ username }} as this user is designated as the site owner.</p>
+  <button class="btn btn-secondary" onclick="location.href='{{ url_for('admin') }}';">Return</button>
+{% endblock %}

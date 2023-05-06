@@ -1,12 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from waitress import serve
+from werkzeug.utils import secure_filename
 import sqlite3
 from func import *
 from dotenv import load_dotenv
 import os
+import csv
 import shutil
 import secrets
-
 
 # Path to .env file
 env_path = 'data/.env'
@@ -40,12 +41,14 @@ if key_check == 'changeme' or key_check == '':
 games_database_url = os.getenv("GAMES_DATABASE_URL")
 user_database_url = os.getenv("USER_DATABASE_URL")
 secret_key = os.getenv("SECRET_KEY")
-debug = os.getenv("DEBUG")
 
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.secret_key = secret_key
 
+# Temp upload location for CSV import
+UPLOAD_FOLDER = './uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -105,19 +108,17 @@ def games():
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
     if session['status'] == 'admin':
-        game = gamebyid(id)
         if request.method == 'POST':
             game_title = request.form['game_title']
             site = request.form['site']
-            game_key = request.form['game_key']
-            redeemed = request.form.get('redeemed') == 'on'
+            redemed = request.form.get('redemed') == 'on'
             claimed = request.form['claimed']
             notes = request.form['notes']
 
             conn = sqlite3.connect(games_database_url)
             c = conn.cursor()
-            c.execute("UPDATE games SET game_title=?, site=?, game_key=?, redemed=?, claimed=?, notes=? WHERE id=?",
-                      (game_title, site, game_key, redeemed, claimed, notes, id))
+            c.execute("UPDATE games SET game_title=?, site=?, redemed=?, claimed=?, notes=? WHERE id=?",
+                      (game_title, site, redemed, claimed, notes, id))
             conn.commit()
             conn.close()
             return redirect(url_for('games'))
@@ -178,9 +179,57 @@ def delete_user(username):
             delete_user_db(username)
             return redirect(url_for('admin'))
         else:
-            return render_template('delete-user.html', username=username)
+            if username == owner:
+                return render_template('delete-owner.html', username=username)
+            else:
+                return render_template('delete-user.html', username=username)
     else:
         return redirect('/dashboard')
+
+
+@app.route('/admin/upload_csv', methods=['GET', 'POST'])
+def upload_csv():
+    if 'username' in session and session['status'] == 'admin':
+        if request.method == 'POST':
+            file = request.files['file']
+            print(file)
+            if file and file.filename.endswith('.csv'):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                print(filename)
+                with open(os.path.join(app.config['UPLOAD_FOLDER'], filename)) as q:
+                    reader = csv.reader(q)
+                    for row in reader:
+                        game_title = row[0]
+                        site = row[1]
+                        game_key = row[2]
+                        redemed = row[3]
+                        claimed = row[4]
+                        notes = row[5]
+                        add_game_to_db(game_title, site, game_key, redemed, claimed, notes)
+                flash('CSV file uploaded successfully.', 'success')
+                return redirect(url_for('admin'))
+        return render_template('upload-csv.html')
+    else:
+        return redirect('/dashboard')
+
+
+@app.route('/delete_game/<int:id>', methods=['GET', 'POST'])
+def delete_game(id):
+    if session['status'] == 'admin':
+        if request.method == 'POST':
+            conn = sqlite3.connect(games_database_url)
+            c = conn.cursor()
+            c.execute("DELETE FROM games WHERE id=?", (id,))
+            conn.commit()
+            conn.close()
+            flash('Game deleted successfully', 'success')
+            return redirect(url_for('games'))
+        else:
+            game = gamebyid(id)
+            return render_template('delete-game.html', id=id, game=game, status=session['status'])
+    else:
+        return redirect('/')
 
 
 @app.route('/logout')
@@ -192,4 +241,4 @@ def logout():
 application = app
 
 if __name__ == '__main__':
-    serve(app, host='0.0.0.0', port=5000, threads=4)
+    serve(app, host='0.0.0.0', port=5000, threads='4')

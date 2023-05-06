@@ -8,11 +8,8 @@ if (/\/admin/.test(window.location.pathname)) {
         passwordField.type = 'password';
       }
     });
-
     var generatePasswordBtn = document.getElementById('generate-password');
-    console.log('Admin page script loaded - 03');
     generatePasswordBtn.addEventListener('click', function () {
-      console.log('Admin page script loaded - 04');
       var phoneticLetters = ['alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot', 'golf', 'hotel', 'india', 'juliet', 'kilo', 'lima', 'mike', 'november', 'oscar', 'papa', 'quebec', 'romeo', 'sierra', 'tango', 'uniform', 'victor', 'whiskey', 'xray', 'yankee', 'zulu'];
       var firstLetter = phoneticLetters[Math.floor(Math.random() * phoneticLetters.length)];
       var secondLetter = phoneticLetters[Math.floor(Math.random() * phoneticLetters.length)];
@@ -21,7 +18,7 @@ if (/\/admin/.test(window.location.pathname)) {
       passwordField.value = password;
       passwordField.type = 'text';
     });
-  });
+  })
 }
 
 if (/\/games/.test(window.location.pathname)) {

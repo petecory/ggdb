@@ -26,8 +26,8 @@
       <td>{% if game['redemed'] == 0 %}False{% endif %}
           {% if game['redemed'] == 1 %}True{% endif %}</td>
       <td>{{ game['claimed'] }}</td>
-      {% if username == 'cory' %}
-      <td><a href="{{ url_for('edit', id=game.id) }}" class="btn btn-primary">Edit</a></td>
+      {% if status == 'admin' %}
+      <td><a href="{{ url_for('edit', id=game.id) }}" class="btn btn-primary">Edit</a> / <a href="{{ url_for('delete_game', id=game.id) }}" onclick="return confirm('Are you sure you want to delete this game?')">Delete</a></td></td>
       {% endif %}
     </tr>
     {% endfor %}

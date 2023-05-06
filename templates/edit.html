@@ -15,11 +15,11 @@
       </tr>
       <tr>
         <td><label for="game_key">Game Key:</label></td>
-        <td><input type="text" name="game_key" class="form-control" value="{{ games[3] }}"></td>
+        <td><span>{{ games[3] }}</span></td>
       </tr>
       <tr>
-        <td><label for="redeemed">Redeemed:</label></td>
-        <td><input type="checkbox" name="redeemed" {% if games[4] == "1" %}checked{% endif %}></td>
+        <td><label for="redemed">Redeemed:</label></td>
+        <td><input type="checkbox" name="redemed" {% if games[4] == "1" %}checked{% endif %}></td>
       </tr>
       <tr>
         <td><label for="claimed">Claimed:</label></td>

@@ -2,11 +2,14 @@ import sqlite3
 import random
 from dotenv import load_dotenv
 import os
+import csv
 
 load_dotenv('data/.env')
 
 games_database_url = os.getenv("GAMES_DATABASE_URL")
 user_database_url = os.getenv("USER_DATABASE_URL")
+owner = os.getenv("OWNER")
+
 
 def verify_user(username, password):
     conn = sqlite3.connect(user_database_url)
@@ -156,8 +159,26 @@ def add_user_to_db(username, password, status):
 
 
 def delete_user_db(username):
-    conn = sqlite3.connect(user_database_url)
+    if username != owner:
+        conn = sqlite3.connect(user_database_url)
+        c = conn.cursor()
+        c.execute("DELETE FROM users WHERE username=?", (username,))
+        conn.commit()
+        conn.close()
+
+
+def add_game_to_db(game_title, site, game_key, redemed, claimed, notes):
+    conn = sqlite3.connect(games_database_url)
     c = conn.cursor()
-    c.execute("DELETE FROM users WHERE username=?", (username,))
+
+    # Check for duplicates
+    c.execute("SELECT game_key FROM games WHERE game_key=?", (game_key,))
+    result = c.fetchone()
+    if result:
+        return
+
+    c.execute("INSERT INTO games (game_title, site, game_key, redemed, claimed, notes) VALUES (?, ?, ?, ?, ?, ?)",
+                (game_title, site, game_key, redemed, claimed, notes))
     conn.commit()
     conn.close()
+    return
