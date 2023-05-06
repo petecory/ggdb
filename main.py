@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, get_flashed_messages
 from waitress import serve
 from werkzeug.utils import secure_filename
 import sqlite3
 from func import *
+from datetime import datetime
 from dotenv import load_dotenv
 import os
 import csv
@@ -52,8 +53,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    if 'username' in session:  # check if the username is already stored in the session
-        return redirect('/dashboard')
+    if 'username' in session:  # check if the username is stored in the session
+        messages = get_flashed_messages()  # get flashed messages
+        return render_template('dashboard.html', username=session['username'], status=session['status'],
+                                messages=messages)
     elif request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -230,6 +233,43 @@ def delete_game(id):
             return render_template('delete-game.html', id=id, game=game, status=session['status'])
     else:
         return redirect('/')
+
+
+@app.route('/change-password', methods=['GET', 'POST'])
+def change_password():
+    if 'username' not in session:
+        return redirect('/')
+
+    username = session['username']
+
+    if request.method == 'POST':
+        old_password = request.form['old_password']
+        new_password = request.form['new_password']
+        confirm_password = request.form['confirm_password']
+
+        user_info = get_user(username)
+
+        if not verify_user(username, old_password):
+            return render_template('change-password.html', error='Incorrect old password')
+
+        if new_password != confirm_password:
+            return render_template('change-password.html', error='Passwords do not match')
+
+        # Call the update_password function
+        success, message = update_password(username, old_password, new_password, confirm_password)
+
+        if success:
+            # Flash success message
+            flash(message, 'success')
+            # Redirect to the dashboard page
+            return redirect('/dashboard')
+        else:
+            # Flash error message
+            flash(message, 'error')
+            # Render the change-password template
+            return render_template('change-password.html')
+
+    return render_template('change-password.html')
 
 
 @app.route('/logout')

@@ -170,7 +170,8 @@ def delete_user_db(username):
 def add_game_to_db(game_title, site, game_key, redemed, claimed, notes):
     conn = sqlite3.connect(games_database_url)
     c = conn.cursor()
-
+    if game_key == 'key':
+        return
     # Check for duplicates
     c.execute("SELECT game_key FROM games WHERE game_key=?", (game_key,))
     result = c.fetchone()
@@ -182,3 +183,27 @@ def add_game_to_db(game_title, site, game_key, redemed, claimed, notes):
     conn.commit()
     conn.close()
     return
+
+
+def update_password(username, current_password, new_password, confirm_password):
+    conn = sqlite3.connect(user_database_url)
+    c = conn.cursor()
+    c.execute("SELECT * FROM users WHERE username=?", (username,))
+    user = c.fetchone()
+    if not user:
+        conn.close()
+        return False, "User not found"
+    elif user[2] != current_password:
+        conn.close()
+        return False, "Current password is incorrect"
+    elif new_password != confirm_password:
+        conn.close()
+        return False, "New password and confirm password do not match"
+    else:
+        c.execute("UPDATE users SET password=? WHERE username=?", (new_password, username))
+        conn.commit()
+        conn.close()
+        return True, "Password updated successfully"
+
+
+

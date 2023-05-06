@@ -7,4 +7,15 @@
     {% if status == 'pending' %}
     <p style="color:red; font-size:30px">You are currently in a Pending status. You will not be able to view the games. Please contact the Admin.</p>
     {% endif %}
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flashes">
+            <li>{{ messages[0] }}</li>
+        </ul>
+      {% endif %}
+    {% endwith %}
+     <h2>Account Settings</h2>
+      <ul>
+        <li><a href="/change-password">Change Password</a></li>
+      </ul>
 {% endblock %}
