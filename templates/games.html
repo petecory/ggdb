@@ -9,11 +9,12 @@
 <table id="games-table">
   <thead>
     <tr>
+      <th>ID</th>
       <th class="title-column">Title</th>
       <th>Site</th>
       <th>Redeemed</th>
       <th>Claimed</th>
-      {% if username == 'cory' %}
+      {% if status == 'admin' %}
       <th></th>
       {% endif %}
     </tr>
@@ -21,10 +22,11 @@
   <tbody>
     {% for game in games %}
     <tr>
+      <td>{{ game['id'] }}</td>
       <td class="title-column">{{ game['game_title'] }}</td>
       <td>{{ game['site'] }}</td>
-      <td>{% if game['redemed'] == 0 %}False{% endif %}
-          {% if game['redemed'] == 1 %}True{% endif %}</td>
+      <td>{% if game['redemed'] == '0' %}False{% endif %}
+          {% if game['redemed'] == '1' %}True{% endif %}</td>
       <td>{{ game['claimed'] }}</td>
       {% if status == 'admin' %}
       <td><a href="{{ url_for('edit', id=game.id) }}" class="btn btn-primary">Edit</a> / <a href="{{ url_for('delete_game', id=game.id) }}" onclick="return confirm('Are you sure you want to delete this game?')">Delete</a></td></td>
