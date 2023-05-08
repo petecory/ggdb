@@ -1,7 +1,93 @@
 {% extends "base.html" %}
+
 {% block content %}
-    <h1>{{ game_title }} Game Details</h1>
-    <p>Hello, {{ username }}!</p>
-    <p>You are logged in.</p>
-    <a href="{{ url_for('logout') }}">Logout</a>
+  <h1>Game Details for {{ game['game_title'] }}</h1>
+    <table style="width: 100%; max-width: 90%">
+      <tr>
+        <td style="width: 30%;">
+          <table>
+            <tr>
+              <th>ID</th>
+              <td>{{ game['id'] }}</td>
+            </tr>
+            <tr>
+              <th>Title</th>
+              <td>{{ game['game_title'] }}</td>
+            </tr>
+            <tr>
+              <th>Released Date</th>
+              <td>{{ game['released'] }}</td>
+            </tr>
+            <tr>
+              <th>Redeemed</th>
+              <td>{% if game['redemed'] == '0' %}False{% endif %}
+                  {% if game['redemed'] == '1' %}True{% endif %}</td>
+            </tr>
+            <tr>
+              <th>Claimed</th>
+              <td>{{ game['claimed'] }}</td>
+            </tr>
+            <tr>
+              <th>Website</th>
+              <td><a href="{{ game['website'] }}" target="_blank">{{ game['game_title'] }}</a></td>
+            </tr>
+            <tr>
+              <th>Notes</th>
+              <td>{{ game['notes'] }}</td>
+            </tr>
+            {% for store in game['stores'] %}
+            <tr>
+              <th>Store: {{ store['name'] }}</th>
+              <td><a href="{{ store['url'] }}" target="_blank">Store Page</a></td>
+            </tr>
+            {% endfor %}
+          </table>
+        </td>
+        <td style="width: 70%;">
+          <div class="slideshow-container">
+            {% for url in game['screenshot_urls'] %}
+              <div class="mySlides fade">
+                <img src="{{ url }}" style="width:100%">
+              </div>
+            {% endfor %}
+            <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+            <a class="next" onclick="plusSlides(1)">&#10095;</a>
+          </div>
+        </td>
+      <tr>
+        <td>
+        </td>
+        <td>
+        <div>
+          <h3 class="align-left">Description</h3>
+          <p class="align-left">{{ game['description'] | safe  }}</p>
+        </div>
+        </td>
+      </tr>
+    </table>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    let slideIndex = 1;
+    showSlides(slideIndex);
+
+    function plusSlides(n) {
+      showSlides(slideIndex += n);
+    }
+
+    function showSlides(n) {
+      const slides = document.getElementsByClassName("mySlides");
+      if (n > slides.length) {
+        slideIndex = 1;
+      }
+      if (n < 1) {
+        slideIndex = slides.length;
+      }
+      for (let i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+      }
+      slides[slideIndex - 1].style.display = "block";
+    }
+  </script>
 {% endblock %}

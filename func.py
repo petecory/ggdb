@@ -2,6 +2,7 @@ import sqlite3
 import random
 from dotenv import load_dotenv
 import os
+import requests
 import csv
 
 load_dotenv('data/.env')
@@ -9,6 +10,7 @@ load_dotenv('data/.env')
 games_database_url = os.getenv("GAMES_DATABASE_URL")
 user_database_url = os.getenv("USER_DATABASE_URL")
 owner = os.getenv("OWNER")
+rawg_key = os.getenv("RAWG_KEY")
 
 
 def verify_user(username, password):
@@ -206,4 +208,95 @@ def update_password(username, current_password, new_password, confirm_password):
         return True, "Password updated successfully"
 
 
+def get_store_info(api_response):
+    store_id_to_name = {
+        1: "Steam",
+        2: "Xbox Store",
+        3: "PlayStation Store",
+        4: "Apple App Store",
+        5: "GOG",
+        6: "Nintendo Store",
+        7: "Xbox 360 Store",
+        8: "Google Play",
+        9: "itch.io",
+        11: "Epic Games"
+    }
 
+    store_info = []
+    for store in api_response['results'][0]:
+        store_entry = {}
+        if 'url' in store:
+            store_entry['url'] = api_response['results'][0]['url']
+            if api_response['results'][0]['store_id'] in store_id_to_name:
+                store_entry['name'] = store_id_to_name[api_response['results'][0]['store_id']]
+
+
+        if store_entry:
+            store_info.append(store_entry)
+    return store_info
+
+
+def get_game_details_by_id(rawg_id):
+    url = f"https://api.rawg.io/api/games/{rawg_id}?key={rawg_key}"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        game_data = response.json()
+        return game_data
+    else:
+        print(f"Error: Request to rawg.io API failed with status code {response.status_code}")
+        return None
+
+
+def get_game_stores(rawg_id):
+    url = f"https://api.rawg.io/api/games/{rawg_id}/stores?key={rawg_key}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        store_data = response.json()
+        return store_data
+    else:
+        print(f"Error: Request to rawg.io API failed with status code {response.status_code}")
+        return None
+
+
+def get_game_details(id):
+    conn = sqlite3.connect(games_database_url)
+    c = conn.cursor()
+    game = c.execute("SELECT * FROM games WHERE id=?", (id,)).fetchone()
+    conn.close()
+
+    # Create a new dictionary for game details
+    game_details = {
+        'id': game[0],
+        'game_title': game[1],
+        'site': game[2],
+        'redemed': game[4],
+        'claimed': game[5],
+        'notes': game[6]
+    }
+
+    # Prepare the rawg.io API endpoint
+    rawg_api_endpoint = f"https://api.rawg.io/api/games?key={rawg_key}"
+    search_query = game[1]  # game_title is in the second position in the list
+    request_url = f"{rawg_api_endpoint}&search={search_query}&search_exact=True"
+    # Make a request to the rawg.io API
+    response = requests.get(request_url)
+    if response.status_code == 200:
+        base_data = response.json()
+        if len(base_data['results']) > 0:
+            rawg_id = base_data['results'][0]['id']
+            api_game_details = get_game_details_by_id(rawg_id)
+            api_game_store = get_game_stores(rawg_id)
+
+            # Add additional game details to the game_details dictionary
+            game_details['website'] = api_game_details['website']
+            game_details['released'] = api_game_details['released']
+            game_details['background_image'] = api_game_details['background_image']
+            game_details['rawg_id'] = api_game_details['id']
+            game_details['description'] = api_game_details['description']
+            game_details['screenshot_urls'] = [screenshot['image'] for screenshot in base_data['results'][0]['short_screenshots']]
+            game_details['stores'] = get_store_info(api_game_store)
+    else:
+        print(f"Error: Request to rawg.io API failed with status code {response.status_code}")
+
+    return game_details

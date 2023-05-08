@@ -1,3 +1,4 @@
+
 if (/\/admin/.test(window.location.pathname)) {
   document.addEventListener('DOMContentLoaded', function () {
     var passwordField = document.getElementById('password');

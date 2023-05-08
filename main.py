@@ -83,18 +83,6 @@ def dashboard():
         return redirect('/')
 
 
-@app.route('/gamedetail')
-def gamedetail():
-    if 'username' in session and session['status'] != 'pending':  # check if the username is stored in the session
-
-        return render_template('gamedetail.html', username=session['username'], status=session['status'])
-    elif session['status'] == 'pending':
-        flash('Your status is pending, contact an Admin')
-        return redirect('/dashboard')
-    else:
-        return redirect('/')
-
-
 @app.route('/games')
 def games():
     if 'username' in session and session['status'] != 'pending':  # check if the username is stored in the session
@@ -272,6 +260,19 @@ def change_password():
             return render_template('change-password.html')
 
     return render_template('change-password.html')
+
+
+@app.route('/gamedetail/<int:id>')
+def gamedetail(id):
+    if 'username' in session and session['status'] != 'pending':  # check if the username is stored in the session
+        # Fetch the game details from the database using the id
+        game = get_game_details(id)
+        return render_template('gamedetail.html', game=game, username=session['username'], status=session['status'])
+    elif session['status'] == 'pending':
+        flash('Your status is pending, contact an Admin')
+        return redirect('/dashboard')
+    else:
+        return redirect('/')
 
 
 @app.route('/logout')

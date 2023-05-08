@@ -14,6 +14,8 @@
             <ul>
                 <li><a href="/dashboard">Dashboard</a></li>
                 <li><a href="/games">Games</a></li>
+                {% block nav_button %}
+                {% endblock %}
                 {% if 'status' in session and session['status'] == 'admin' %}
                 <li><a href="{{ url_for('admin') }}">Admin</a></li>
                 {% endif %}
@@ -35,6 +37,8 @@
         <br />
         &copy; GGDB 2023
     </footer>
+{% block scripts %}
 <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+{% endblock %}
 </body>
 </html>

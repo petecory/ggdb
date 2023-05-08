@@ -23,7 +23,7 @@
     {% for game in games %}
     <tr>
       <td>{{ game['id'] }}</td>
-      <td class="title-column">{{ game['game_title'] }}</td>
+      <td class="title-column"><a href="{{ url_for('gamedetail', id=game['id']) }}">{{ game['game_title'] }}</a></td>
       <td>{{ game['site'] }}</td>
       <td>{% if game['redemed'] == '0' %}False{% endif %}
           {% if game['redemed'] == '1' %}True{% endif %}</td>

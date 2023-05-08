@@ -1,21 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
     <h1>Welcome to The Games Database</h1>
-    <p>Hello, {{ username }}!</p>
-    <p>You are logged in.</p>
-    <p>Your current status is {{ status }}.</p>
+    <p>Hello, {{ username }}! <br /><br /> You are in a status of {{ status }}</p>
+    <h2>Updates:</h2>
+    <hr>
+    <p>8MAY2022 - Added Games Detail Page. Pulls data from rawg.io if available. You can access the Game Details by
+    clicking the title of game in the table.</p>
+    <hr>
     {% if status == 'pending' %}
     <p style="color:red; font-size:30px">You are currently in a Pending status. You will not be able to view the games. Please contact the Admin.</p>
+    <hr>
     {% endif %}
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul class="flashes">
-            <li>{{ messages[0] }}</li>
-        </ul>
-      {% endif %}
-    {% endwith %}
-     <h2>Account Settings</h2>
-      <ul>
+    <h2>Account Settings</h2>
+    <ul>
         <li><a href="/change-password">Change Password</a></li>
-      </ul>
+    </ul>
 {% endblock %}
