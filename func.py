@@ -223,13 +223,12 @@ def get_store_info(api_response):
     }
 
     store_info = []
-    for store in api_response['results'][0]:
+    for store in api_response['results']:
         store_entry = {}
         if 'url' in store:
-            store_entry['url'] = api_response['results'][0]['url']
-            if api_response['results'][0]['store_id'] in store_id_to_name:
-                store_entry['name'] = store_id_to_name[api_response['results'][0]['store_id']]
-
+            store_entry['url'] = store['url']
+            if store['store_id'] in store_id_to_name:
+                store_entry['name'] = store_id_to_name[store['store_id']]
 
         if store_entry:
             store_info.append(store_entry)
@@ -253,6 +252,7 @@ def get_game_stores(rawg_id):
     response = requests.get(url)
     if response.status_code == 200:
         store_data = response.json()
+        print(store_data)
         return store_data
     else:
         print(f"Error: Request to rawg.io API failed with status code {response.status_code}")
